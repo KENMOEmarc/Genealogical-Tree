@@ -21,6 +21,7 @@ public abstract class Human implements Information {
 
     public Human() {
         this.sex = Sex.MALE;
+        this.kinship = Kinship.CHILD;
         children = new ArrayList<>();
     }
 
@@ -53,6 +54,11 @@ public abstract class Human implements Information {
 
     public void  addChild(Human child) {
         children.add(child);
+//        if (this.sex == Sex.MALE) {
+//            child.setFather(this);
+//        } else {
+//            child.setMother(this);
+//        }
     }
 
     public List<Human> getChildren() {
@@ -140,15 +146,15 @@ public abstract class Human implements Information {
     }
 
     private void getParentInfo() {
-        System.out.println("I'm " + this );
-        System.out.println("Call me " + this.getName());
+        System.out.println("Call me " + this.getName() + " I'm = " + age + " years old");
         System.out.println("I am the " +
                     ( (getSex() == Sex.MALE) ? "Father" : "Mother" ) + " of : " + getChildrenNames()
         );
     }
 
     private void getChildInfo() {
-        System.out.println("I'm " + this );
+
+        System.out.println("My name is " + this.getName() + ", i'm = " + age + ", sex = " + sex );
         System.out.println("I am a child.");
         if (getSiblings() != null) {
             System.out.println( "I've got some siblings : " + getSiblingsNames());
@@ -156,8 +162,6 @@ public abstract class Human implements Information {
             System.out.println("I don't have any sibling.");
         }
     }
-
-
 
     @Override
     public String toString() {

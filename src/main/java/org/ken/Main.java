@@ -9,18 +9,19 @@ public class Main {
         Person father = new Person("John Smith", Sex.MALE, 37.5);
         Human mother = new Person("Elena Gomez", Sex.FEMALE, 34.0);
 
-        Human human;
-        human = new Person("Jonathan", Sex.MALE, 20.0);
+        Human jonathan;
+        jonathan = new Person("Jonathan", Sex.MALE, 20.0);
 
-        Human child = new Person("Bernard", Sex.MALE, 21);
-        child.setMother(mother);
-        child.setFather(father);
+        Human bernard = new Person("Bernard", Sex.MALE, 21);
+        bernard.setMother(mother);
+        bernard.setFather(father);
 
-        mother.addChild(human);
-        father.addChild(human);
+        mother.addChild(jonathan);
+        System.out.println(jonathan.getMother().getName());
+        father.addChild(jonathan);
 
         father.displayInformation();
         mother.displayInformation();
-        child.displayInformation();
+        bernard.displayInformation();
     }
 }
