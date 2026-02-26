@@ -1,15 +1,18 @@
 package org.ken;
 
+import org.ken.enums.Sex;
+import org.ken.models.Human;
+import org.ken.models.Person;
+
 public class Main {
     public static void main(String[] args) {
-        Parent father = new Parent("John Smith", Sex.MALE, 37.5);
-        Parent mother = new Parent("Elena Gomez", Sex.FEMALE, 34.0);
+        Person father = new Person("John Smith", Sex.MALE, 37.5);
+        Human mother = new Person("Elena Gomez", Sex.FEMALE, 34.0);
 
         Human human;
-        human = new Child("Jonathan", Sex.MALE, 20.0);
-        human.greetings();
+        human = new Person("Jonathan", Sex.MALE, 20.0);
 
-        Child child = new Child("Bernard", Sex.MALE, 21);
+        Human child = new Person("Bernard", Sex.MALE, 21);
         child.setMother(mother);
         child.setFather(father);
 
