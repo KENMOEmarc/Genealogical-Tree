@@ -4,12 +4,13 @@ import org.ken.contracts.Information;
 import org.ken.enums.Kinship;
 import org.ken.enums.Sex;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class Human implements Information {
+
+    private static final int MAX_AGE = 150;
+    private static final int MIN_AGE = 0;
 
     protected String name;
     protected double age;
@@ -25,6 +26,35 @@ public abstract class Human implements Information {
         this.kinship = Kinship.CHILD;
         children = new ArrayList<>();
     }
+
+    public Human(Kinship kinship, Sex sex, double age, String name) {
+        validateParameters(name, age, sex, kinship);
+        this.kinship = kinship;
+        this.sex = sex;
+        this.age = age;
+        this.name = name;
+    }
+
+    private void validateParameters(String name, double age, Sex sex, Kinship kinship) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+
+        if (age < MIN_AGE || age > MAX_AGE) {
+            throw new IllegalArgumentException(
+                    String.format("Age must be between %d and %d", MIN_AGE, MAX_AGE)
+            );
+        }
+
+        if (sex == null) {
+            throw new IllegalArgumentException("Sex cannot be null");
+        }
+
+        if (kinship == null) {
+            throw new IllegalArgumentException("Family status cannot be null");
+        }
+    }
+
 
     public Set<Human> getSiblings() {
         Set<Human> siblings = new HashSet<>();
@@ -42,24 +72,14 @@ public abstract class Human implements Information {
                 }
             }
         }
-        return siblings;
+        return Collections.unmodifiableSet(siblings);
     }
 
-    public List<Human> getCousins() {
-        List<Human> niblings = new ArrayList<>();
-        if (father != null) {
-            var fNiblings = father.getSiblings().stream().
-                    flatMap(element -> element.getSiblings().stream()
-                    );
-            fNiblings.forEach(nibling -> niblings.add(nibling));
-        }
-        if (mother != null) {
-            var mNiblings = mother.getSiblings().stream().
-                    flatMap(element -> element.getSiblings().stream()
-                    );
-            mNiblings.forEach(nibling -> niblings.add(nibling));
-        }
-        return niblings;
+    public Set<Human> getCousins() {
+        var cousins = getUnclesAndAunts().stream().
+                map(Human::getChildren).flatMap(Collection::stream).
+                collect(Collectors.toSet() );
+        return Collections.unmodifiableSet(cousins);
     }
 
     public List<Human> getNiblings() {
@@ -71,7 +91,7 @@ public abstract class Human implements Information {
     }
 
     public List<String> getCousinsNames() {
-        return getNiblings().stream().
+        return getCousins().stream().
                 map(Human::getName).toList();
     }
 
@@ -80,17 +100,15 @@ public abstract class Human implements Information {
                 map(Human::getName).toList();
     }
 
-    public List<Human> getUnclesAndAunts() {
-        List<Human> unclesAndAunts = new ArrayList<>();
+    public Set<Human> getUnclesAndAunts() {
+        Set<Human> unclesAndAunts = new HashSet<>();
         if (father != null) {
-            father.getSiblings().stream().
-                    forEach(sibling -> unclesAndAunts.add(sibling));
+            unclesAndAunts.addAll(father.getSiblings());
         }
         if (mother != null) {
-            mother.getSiblings().stream().
-                    forEach(sibling -> unclesAndAunts.add(sibling));
+            unclesAndAunts.addAll(mother.getSiblings());
         }
-        return unclesAndAunts;
+        return Collections.unmodifiableSet(unclesAndAunts);
     }
 
     public List<String> getUnclesAndAuntNames() {

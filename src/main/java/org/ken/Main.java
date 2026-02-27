@@ -17,7 +17,7 @@ public class Main {
         bernard.setFather(father);
 
         mother.addChild(jonathan);
-        System.out.println(jonathan.getMother().getName());
+        //System.out.println(jonathan.getMother().getName());
         father.addChild(jonathan);
 
         father.displayInformation();
