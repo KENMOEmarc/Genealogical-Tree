@@ -33,6 +33,7 @@ public abstract class Human implements Information {
         this.sex = sex;
         this.age = age;
         this.name = name;
+        children = new ArrayList<>();
     }
 
     private void validateParameters(String name, double age, Sex sex, Kinship kinship) {
@@ -125,23 +126,23 @@ public abstract class Human implements Information {
     }
 
     public void  addChild(Human child) {
-        if (child == null) {
-            throw new IllegalArgumentException("The children cannot be null");
-        }
+        linkParentChild(this, child);
+    }
 
-        if (!children.contains(child)) {
-            children.add(child);
+    private void linkParentChild(Human parent, Human child) {
+        if (!parent.children.contains(child)) {
+            parent.children.add(child);
 
-            if (this.sex == Sex.MALE) {
-                child.setFather(this);
+            if (parent.sex == Sex.MALE) {
+                child.father = parent;
             } else {
-                child.setMother(this);
+                child.mother = parent;
             }
         }
     }
 
     public List<Human> getChildren() {
-        return children;
+        return Collections.unmodifiableList(children);
     }
 
     public List<String> getChildrenNames() {
@@ -156,18 +157,16 @@ public abstract class Human implements Information {
         return father;
     }
 
-    public void setFather(Human father) {
+    protected void setFather(Human father) {
         this.father = father;
-        father.addChild(this);
     }
 
     public Human getMother() {
         return mother;
     }
 
-    public void setMother(Human mother) {
+    protected void setMother(Human mother) {
         this.mother = mother;
-        mother.addChild(this);
     }
 
     public String getParentsNames() {
