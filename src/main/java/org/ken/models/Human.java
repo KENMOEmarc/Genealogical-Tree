@@ -125,12 +125,19 @@ public abstract class Human implements Information {
     }
 
     public void  addChild(Human child) {
-        children.add(child);
-//        if (this.sex == Sex.MALE) {
-//            child.setFather(this);
-//        } else {
-//            child.setMother(this);
-//        }
+        if (child == null) {
+            throw new IllegalArgumentException("The children cannot be null");
+        }
+
+        if (!children.contains(child)) {
+            children.add(child);
+
+            if (this.sex == Sex.MALE) {
+                child.setFather(this);
+            } else {
+                child.setMother(this);
+            }
+        }
     }
 
     public List<Human> getChildren() {
