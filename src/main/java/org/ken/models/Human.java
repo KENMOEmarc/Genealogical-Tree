@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class Human implements Information {
+
     protected String name;
     protected double age;
     protected Sex sex;
@@ -42,6 +43,59 @@ public abstract class Human implements Information {
             }
         }
         return siblings;
+    }
+
+    public List<Human> getCousins() {
+        List<Human> niblings = new ArrayList<>();
+        if (father != null) {
+            var fNiblings = father.getSiblings().stream().
+                    flatMap(element -> element.getSiblings().stream()
+                    );
+            fNiblings.forEach(nibling -> niblings.add(nibling));
+        }
+        if (mother != null) {
+            var mNiblings = mother.getSiblings().stream().
+                    flatMap(element -> element.getSiblings().stream()
+                    );
+            mNiblings.forEach(nibling -> niblings.add(nibling));
+        }
+        return niblings;
+    }
+
+    public List<Human> getNiblings() {
+        List<Human> niblings = new ArrayList<>();
+        for (Human sibling : getSiblings()) {
+            niblings.addAll(sibling.getChildren());
+        }
+        return niblings;
+    }
+
+    public List<String> getCousinsNames() {
+        return getNiblings().stream().
+                map(Human::getName).toList();
+    }
+
+    public List<String> getNiblingNames() {
+        return getNiblings().stream().
+                map(Human::getName).toList();
+    }
+
+    public List<Human> getUnclesAndAunts() {
+        List<Human> unclesAndAunts = new ArrayList<>();
+        if (father != null) {
+            father.getSiblings().stream().
+                    forEach(sibling -> unclesAndAunts.add(sibling));
+        }
+        if (mother != null) {
+            mother.getSiblings().stream().
+                    forEach(sibling -> unclesAndAunts.add(sibling));
+        }
+        return unclesAndAunts;
+    }
+
+    public List<String> getUnclesAndAuntNames() {
+        return getUnclesAndAunts().stream().
+                map(Human::getName).toList();
     }
 
     public List<String> getSiblingsNames() {
@@ -92,7 +146,9 @@ public abstract class Human implements Information {
     }
 
     public String getParentsNames() {
-        return getMother().getName() + " " + getFather().getName();
+        String motherName = (mother != null) ? mother.getName() : "Inconnue";
+        String fatherName = (father != null) ? father.getName() : "Inconnu";
+        return motherName + " " + fatherName;
     }
 
     public String getName() {
@@ -119,7 +175,9 @@ public abstract class Human implements Information {
         return kinship;
     }
 
-    public void setKinship(Kinship kinship) {}
+    public void setKinship(Kinship kinship) {
+        this.kinship = kinship;
+    }
 
     @Override
     public void displayInformation() {
@@ -156,7 +214,7 @@ public abstract class Human implements Information {
 
         System.out.println("My name is " + this.getName() + ", i'm = " + age + ", sex = " + sex );
         System.out.println("I am a child.");
-        if (getSiblings() != null) {
+        if (!getSiblings().isEmpty()) {
             System.out.println( "I've got some siblings : " + getSiblingsNames());
         } else {
             System.out.println("I don't have any sibling.");
@@ -170,8 +228,7 @@ public abstract class Human implements Information {
                 ", age = " + age +
                 ", sex = " + sex +
                 ", kinship = " + kinship +
-                ", father = " + father.getName() +
-                ", mother = " + mother.getName() +
+                ", parentsNames = " + getParentsNames() +
                 '}';
     }
 }
