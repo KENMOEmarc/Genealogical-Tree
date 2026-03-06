@@ -4,6 +4,8 @@ import org.ken.enums.Kinship;
 import org.ken.enums.Sex;
 import org.ken.models.Human;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +25,7 @@ class HumanTest {
     // Concrete class for testing
     static class TestHuman extends Human {
         public TestHuman(Kinship kinship, Sex sex, double age, String name) {
-            super(kinship, sex, age, name);
+            super(kinship, sex, LocalDate.of(2006, 7, 29), name);
         }
     }
 

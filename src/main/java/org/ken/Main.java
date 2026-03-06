@@ -2,97 +2,107 @@ package org.ken;
 
 import org.ken.enums.Kinship;
 import org.ken.enums.Sex;
+import org.ken.models.Biography;
+import org.ken.models.Diploma;
 import org.ken.models.Person;
+import org.ken.models.PersonDTO;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 public class Main {
 
     public static void main(String[] args) {
+        // Create individuals
+        Person john = new Person(Kinship.PARENT, Sex.MALE, LocalDate.of(1970, 5, 10), "John");
+        Person jane = new Person(Kinship.PARENT, Sex.FEMALE, LocalDate.of(1972, 8, 15), "Jane");
+        Person bob = new Person(Kinship.CHILD, Sex.MALE, LocalDate.of(1995, 3, 20), "Bob");
+        Person alice = new Person(Kinship.CHILD, Sex.FEMALE, LocalDate.of(1998, 7, 12), "Alice");
+        Person charlie = new Person(Kinship.CHILD, Sex.MALE, LocalDate.of(2000, 11, 5), "Charlie");
 
-        // ==============================
-        // 1️⃣ Create Grandparents
-        // ==============================
+        // Build relationships
+        john.addChild(bob);
+        john.addChild(alice);
+        jane.addChild(bob);
+        jane.addChild(alice);
+        bob.addChild(charlie);  // Charlie is Bob's child
 
-        Person grandFather = new Person(Kinship.GRAND_PARENT, Sex.MALE, 78, "George");
-        Person grandMother = new Person(Kinship.GRAND_PARENT, Sex.FEMALE, 72, "Martha");
+        // Set kinship roles after children are added (for display)
+        bob.setKinship(Kinship.PARENT);
+        charlie.setKinship(Kinship.GRAND_CHILD);
 
-        System.out.println("===== GRAND PARENTS CREATED =====");
+        // Biographies
+        Biography johnBio = new Biography(
+                List.of(new Diploma("PhD Computer Science", "MIT", "Summa Cum Laude", 1995)),
+                List.of("Professor at Stanford", "Researcher at Google"),
+                List.of("ACM", "IEEE"),
+                "New York",
+                List.of(Map.of("platform", "LinkedIn", "url", "linkedin.com/in/john"))
+        );
+        john.setBiography(johnBio);
 
-        // ==============================
-        // 2️⃣ Create Their 4 Children
-        // ==============================
+        Biography bobBio = new Biography(
+                List.of(new Diploma("BSc Software Engineering", "University of Cambridge", "First Class", 2017)),
+                List.of("Senior Developer at Microsoft"),
+                List.of("Open Source Collective"),
+                "London",
+                List.of(Map.of("platform", "GitHub", "username", "bob-dev"))
+        );
+        bob.setBiography(bobBio);
 
-        Person child1 = new Person(Kinship.PARENT, Sex.MALE, 50, "John");
-        Person child2 = new Person(Kinship.PARENT, Sex.FEMALE, 48, "Anna");
-        Person child3 = new Person(Kinship.PARENT, Sex.MALE, 45, "David");
-        Person child4 = new Person(Kinship.PARENT, Sex.FEMALE, 42, "Sarah");
+        Biography charlieBio = new Biography(
+                List.of(),
+                List.of(),
+                List.of("Chess Club"),
+                "Seattle",
+                List.of()
+        );
+        charlie.setBiography(charlieBio);
 
-        // Link children to grandparents
-        grandFather.addChild(child1);
-        grandMother.addChild(child1);
+        // Test basic info
+        System.out.println("=== Basic Information ===");
+        System.out.println(john);
+        System.out.println("John's age: " + john.getAge());
+        System.out.println("Bob's age: " + bob.getAge());
+        System.out.println("Charlie's alive? " + charlie.isAlive());
 
-        grandFather.addChild(child2);
-        grandMother.addChild(child2);
+        // Family relationships
+        System.out.println("\n=== Family Relationships ===");
+        System.out.println("Bob's siblings: " + bob.getSiblingsNames());
+        System.out.println("Bob's cousins: " + bob.getCousinsNames());
+        System.out.println("Bob's uncles/aunts: " + bob.getUnclesAndAuntNames());
+        System.out.println("Charlie's grandparents: " + charlie.getParentsNames());
 
-        grandFather.addChild(child3);
-        grandMother.addChild(child3);
+        // Display information (polymorphic)
+        System.out.println("\n=== Display Information ===");
+        john.displayInformation();
+        System.out.println();
+        bob.displayInformation();
+        System.out.println();
+        charlie.displayInformation();
 
-        grandFather.addChild(child4);
-        grandMother.addChild(child4);
+        // Biography access
+        System.out.println("\n=== Biographies ===");
+        System.out.println("John's diplomas: " + john.getBiography().diplomas());
+        System.out.println("Bob's jobs: " + bob.getBiography().jobs());
+        System.out.println("Charlie's associations: " + charlie.getBiography().associations());
 
-        System.out.println("===== 4 CHILDREN CREATED =====");
+        // DTO test
+        System.out.println("\n=== Person DTO (John) ===");
+        PersonDTO dto = new PersonDTO(john, john.getBiography());
+        System.out.println("Name: " + dto.getName());
+        System.out.println("Age: " + dto.getAge());
+        System.out.println("Father: " + dto.getFatherName());
+        System.out.println("Children: " + dto.getChildrenNames());
+        System.out.println("Diplomas: " + dto.getDiplomas());
+        System.out.println("Social Media: " + dto.getSocialMediaAccounts());
 
-        // ==============================
-        // 3️⃣ Each child has 3 children
-        // ==============================
-
-        createChildren(child1, "Chris", "Emma", "Lucas");
-        createChildren(child2, "Olivia", "Noah", "Liam");
-        createChildren(child3, "Sophia", "Mason", "James");
-        createChildren(child4, "Isabella", "Ethan", "Mia");
-
-        System.out.println("===== GRAND CHILDREN CREATED =====");
-
-        // ==============================
-        // 4️⃣ Display Informations
-        // ==============================
-
-        System.out.println("\n===== DISPLAY GRANDPARENTS INFO =====");
-        grandFather.displayInformation();
-        grandMother.displayInformation();
-
-        System.out.println("\n===== DISPLAY CHILD INFO =====");
-        child1.displayInformation();
-
-        System.out.println("\nSiblings of John: " + child1.getSiblingsNames());
-
-        System.out.println("\nChildren of John: " + child1.getChildrenNames());
-
-        System.out.println("\n===== TEST COUSINS =====");
-        System.out.println("Cousins of Chris: " +
-                child1.getChildren().get(0).getCousinsNames());
-
-        System.out.println("\n===== TEST UNCLES & AUNTS =====");
-        System.out.println("Uncles/Aunts of Chris: " +
-                child1.getChildren().get(0).getUnclesAndAuntNames());
-
-        System.out.println("\n===== TEST NIBLINGS =====");
-        System.out.println("Niblings of Anna: " + child2.getNiblingNames());
-
-        System.out.println("\n===== TO STRING TEST =====");
-        System.out.println(child1);
-    }
-
-
-    private static void createChildren(Person parent, String name1, String name2, String name3) {
-
-        Person c1 = new Person(Kinship.GRAND_CHILD, Sex.MALE, 20, name1);
-        Person c2 = new Person(Kinship.GRAND_CHILD, Sex.FEMALE, 18, name2);
-        Person c3 = new Person(Kinship.GRAND_CHILD, Sex.MALE, 15, name3);
-
-        parent.addChild(c1);
-        parent.addChild(c2);
-        parent.addChild(c3);
-
-        System.out.println("Children created for " + parent.getName());
+        // Validation demo (uncomment to see exceptions)
+        // try {
+        //     new Person(Kinship.CHILD, Sex.MALE, LocalDate.of(2050, 1, 1), "Future");
+        // } catch (IllegalArgumentException e) {
+        //     System.out.println("Validation caught: " + e.getMessage());
+        // }
     }
 }
